@@ -119,6 +119,37 @@
             #instructions.fade {
                 opacity: 0;
             }
+
+            #motion-button {
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 15px 30px;
+                font-size: 16px;
+                background: #e94560;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                z-index: 100;
+                display: none;
+            }
+
+            #motion-button:hover {
+                background: #ff6b6b;
+            }
+
+            #motion-button.hidden {
+                display: none !important;
+            }
+
+            @media (max-width: 600px) {
+                #image-container {
+                    width: 90vw;
+                    height: 90vw;
+                }
+            }
         </style>
     </head>
     <body>
@@ -128,6 +159,8 @@
         </div>
 
         <div id="instructions">Move your mouse around to make the face follow your cursor</div>
+
+        <button id="motion-button">Enable Motion Tracking</button>
 
         <div id="image-container"></div>
 
@@ -160,9 +193,20 @@
             const progressText = document.getElementById("progress-text");
             const debug = document.getElementById("debug");
             const instructions = document.getElementById("instructions");
+            const motionButton = document.getElementById("motion-button");
 
             let loadedCount = 0;
             let currentImage = null;
+            let motionEnabled = false;
+            let isMobileDevice = false;
+
+            // Detect if device is mobile/tablet
+            function detectMobileDevice() {
+                return (
+                    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                    (window.DeviceOrientationEvent !== undefined && "ontouchstart" in window)
+                );
+            }
 
             // Preload all images
             function preloadImages() {
@@ -225,30 +269,12 @@
                 return `${closestPitch}_${closestPupilX}_${closestPupilY}`;
             }
 
-            // Update displayed image based on mouse position
-            function updateImage(mouseX, mouseY) {
-                const centerX = window.innerWidth / 2;
-                const centerY = window.innerHeight / 2;
-
-                // Calculate offset from center (-1 to 1)
-                const offsetX = (mouseX - centerX) / centerX;
-                const offsetY = (mouseY - centerY) / centerY;
-
-                // Map to parameter ranges
-                // pupil_x: -15 to 15 (horizontal eye movement) - follows mouse X
-                // pupil_y: -15 to 15 (vertical eye movement) - follows mouse Y (inverted)
-                // rotate_pitch: -20 to 20 (head tilt up/down) - follows mouse Y
-
-                const targetPupilX = offsetX * 15;
-                const targetPupilY = -offsetY * 15; // Inverted: mouse up = look up
-                const targetPitch = offsetY * 20; // Mouse up = negative pitch (look up)
-
+            // Update displayed image based on parameters
+            function updateImageByParams(targetPitch, targetPupilX, targetPupilY, debugInfo = "") {
                 const imageKey = findClosestImage(targetPitch, targetPupilX, targetPupilY);
 
                 // Update debug info
-                debug.textContent = `Mouse: (${mouseX.toFixed(0)}, ${mouseY.toFixed(0)}) | Offset: (${offsetX.toFixed(
-                    2
-                )}, ${offsetY.toFixed(2)}) | Image: ${imageKey}`;
+                debug.textContent = debugInfo + ` | Image: ${imageKey}`;
 
                 // Switch to the new image
                 if (currentImage !== imageKey) {
@@ -265,6 +291,82 @@
                 }
             }
 
+            // Update displayed image based on mouse position
+            function updateImageFromMouse(mouseX, mouseY) {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+
+                // Calculate offset from center (-1 to 1)
+                const offsetX = (mouseX - centerX) / centerX;
+                const offsetY = (mouseY - centerY) / centerY;
+
+                // Map to parameter ranges
+                const targetPupilX = offsetX * 15;
+                const targetPupilY = -offsetY * 15;
+                const targetPitch = offsetY * 20;
+
+                const debugInfo = `Mouse: (${mouseX.toFixed(0)}, ${mouseY.toFixed(0)}) | Offset: (${offsetX.toFixed(
+                    2
+                )}, ${offsetY.toFixed(2)})`;
+                updateImageByParams(targetPitch, targetPupilX, targetPupilY, debugInfo);
+            }
+
+            // Update displayed image based on device orientation
+            function updateImageFromOrientation(beta, gamma) {
+                // beta: front/back tilt (-180 to 180), 0 = upright
+                // gamma: left/right tilt (-90 to 90)
+
+                // Normalize beta (phone usually held at ~45-90 degrees)
+                // When phone is upright (~90), we want center position
+                // Tilt forward (beta < 90) = look up, tilt back (beta > 90) = look down
+                const normalizedBeta = Math.max(-45, Math.min(45, beta - 45));
+
+                // Normalize gamma (-45 to 45 is comfortable range)
+                const normalizedGamma = Math.max(-45, Math.min(45, gamma));
+
+                // Map to parameter ranges
+                // gamma controls horizontal eye movement (pupil_x)
+                // beta controls vertical eye movement (pupil_y) and head pitch
+                const targetPupilX = (normalizedGamma / 45) * 15;
+                const targetPupilY = -(normalizedBeta / 45) * 15;
+                const targetPitch = (normalizedBeta / 45) * 20;
+
+                const debugInfo = `Beta: ${beta?.toFixed(1)}° | Gamma: ${gamma?.toFixed(
+                    1
+                )}° | Normalized: (${normalizedBeta.toFixed(1)}, ${normalizedGamma.toFixed(1)})`;
+                updateImageByParams(targetPitch, targetPupilX, targetPupilY, debugInfo);
+            }
+
+            // Request motion permission (required on iOS)
+            async function requestMotionPermission() {
+                if (typeof DeviceOrientationEvent.requestPermission === "function") {
+                    try {
+                        const permission = await DeviceOrientationEvent.requestPermission();
+                        if (permission !== "granted") {
+                            alert("Motion permission denied. The face won't track your device orientation.");
+                            return false;
+                        }
+                    } catch (error) {
+                        console.error("Error requesting motion permission:", error);
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            // Start reading device orientation
+            function startMotionTracking() {
+                motionEnabled = true;
+                motionButton.classList.add("hidden");
+                instructions.textContent = "Tilt your device to make the face follow";
+
+                window.addEventListener("deviceorientation", (event) => {
+                    if (motionEnabled && event.beta !== null && event.gamma !== null) {
+                        updateImageFromOrientation(event.beta, event.gamma);
+                    }
+                });
+            }
+
             // Initialize
             async function init() {
                 await preloadImages();
@@ -279,22 +381,38 @@
                     currentImage = initialKey;
                 }
 
-                // Fade out instructions after 3 seconds
-                setTimeout(() => {
-                    instructions.classList.add("fade");
-                }, 3000);
+                // Detect device type
+                isMobileDevice = detectMobileDevice();
 
-                // Add mouse move listener
-                document.addEventListener("mousemove", (e) => {
-                    updateImage(e.clientX, e.clientY);
-                });
+                if (isMobileDevice) {
+                    // Show motion button for mobile devices
+                    motionButton.style.display = "block";
+                    instructions.textContent = "Tap the button below to enable motion tracking";
 
-                // Also handle touch for mobile
-                document.addEventListener("touchmove", (e) => {
-                    if (e.touches.length > 0) {
-                        updateImage(e.touches[0].clientX, e.touches[0].clientY);
-                    }
-                });
+                    motionButton.addEventListener("click", async () => {
+                        const permissionGranted = await requestMotionPermission();
+                        if (permissionGranted) {
+                            startMotionTracking();
+                        }
+                    });
+
+                    // Also handle touch for fallback
+                    document.addEventListener("touchmove", (e) => {
+                        if (!motionEnabled && e.touches.length > 0) {
+                            updateImageFromMouse(e.touches[0].clientX, e.touches[0].clientY);
+                        }
+                    });
+                } else {
+                    // Desktop: use mouse tracking
+                    // Fade out instructions after 3 seconds
+                    setTimeout(() => {
+                        instructions.classList.add("fade");
+                    }, 3000);
+
+                    document.addEventListener("mousemove", (e) => {
+                        updateImageFromMouse(e.clientX, e.clientY);
+                    });
+                }
             }
 
             init();

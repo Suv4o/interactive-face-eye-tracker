@@ -12,6 +12,10 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 
+# SSL Certificates
+cert.pem
+key.pem
+
 # Build outputs
 dist/
 build/

@@ -115,10 +115,53 @@ Also update the parameter arrays in `viewer/index.html` to match your new values
 
 ## Scripts
 
-| Command         | Description                              |
-| --------------- | ---------------------------------------- |
-| `npm start`     | Generate face images using Replicate API |
-| `npm run serve` | Start web server on port 3000            |
+| Command               | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| `npm start`           | Generate face images using Replicate API         |
+| `npm run serve`       | Start HTTP web server on port 3000               |
+| `npm run serve:https` | Start HTTPS web server on port 3000 (for mobile) |
+
+## Mobile Device Support (Motion Tracking)
+
+The viewer supports device orientation sensors on mobile devices. When you tilt your phone, the face will follow!
+
+### Setting Up HTTPS for Mobile Testing
+
+Motion sensors require HTTPS to work on mobile browsers. To test on your phone:
+
+1. **Generate SSL certificates** (self-signed):
+
+    ```bash
+    openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
+    ```
+
+2. **Start the HTTPS server**:
+
+    ```bash
+    npm run serve:https
+    ```
+
+3. **Find your local IP address**:
+
+    ```bash
+    # macOS
+    ipconfig getifaddr en0
+
+    # Linux
+    hostname -I
+
+    # Windows
+    ipconfig
+    ```
+
+4. **On your mobile device**:
+    - Connect to the same WiFi network as your computer
+    - Open your browser and go to `https://YOUR_IP:3000`
+    - Accept the security warning (self-signed certificate)
+    - Tap "Enable Motion Tracking" button
+    - Tilt your phone to control the face!
+
+**Note**: The `cert.pem` and `key.pem` files are gitignored and need to be generated locally.
 
 ## API Parameters Reference
 

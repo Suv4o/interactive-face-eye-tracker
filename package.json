@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "start": "tsx --env-file=.env ./index.ts",
-        "serve": "npx serve ./viewer -p 3000"
+        "serve": "npx serve ./viewer -p 3000",
+        "serve:https": "npx serve ./viewer -p 3000 --ssl-cert ./cert.pem --ssl-key ./key.pem"
     },
     "keywords": [],
     "author": "",
