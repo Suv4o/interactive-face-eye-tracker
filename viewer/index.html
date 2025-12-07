@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Eye Tracking Face</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+
+            #loading {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                color: white;
+            }
+
+            #loading.hidden {
+                display: none;
+            }
+
+            .loader {
+                width: 60px;
+                height: 60px;
+                border: 4px solid rgba(255, 255, 255, 0.2);
+                border-top-color: #e94560;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 20px;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            #progress-text {
+                font-size: 18px;
+                color: #e94560;
+            }
+
+            #image-container {
+                position: relative;
+                width: 500px;
+                height: 500px;
+            }
+
+            #image-container img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                opacity: 0;
+                transition: opacity 0.05s ease;
+                border-radius: 10px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+
+            #image-container img.active {
+                opacity: 1;
+            }
+
+            /* Preload images but keep them hidden */
+            .preload-container {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            #debug {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 12px;
+                font-family: monospace;
+            }
+
+            #instructions {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 14px;
+                text-align: center;
+                opacity: 1;
+                transition: opacity 0.5s ease;
+            }
+
+            #instructions.fade {
+                opacity: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loading">
+            <div class="loader"></div>
+            <div id="progress-text">Loading images... 0%</div>
+        </div>
+
+        <div id="instructions">Move your mouse around to make the face follow your cursor</div>
+
+        <div id="image-container"></div>
+
+        <div id="debug"></div>
+
+        <script>
+            // Image mappings - all combinations of pitch, pupil_x, pupil_y
+            const pitchValues = [-20, -10, 0, 10, 20];
+            const pupilXValues = [-15, 0, 15];
+            const pupilYValues = [-15, 0, 15];
+
+            // Generate all image filenames
+            const images = [];
+            for (const pitch of pitchValues) {
+                for (const px of pupilXValues) {
+                    for (const py of pupilYValues) {
+                        images.push({
+                            filename: `image_pitch${pitch}_px${px}_py${py}.webp`,
+                            rotate_pitch: pitch,
+                            pupil_x: px,
+                            pupil_y: py,
+                        });
+                    }
+                }
+            }
+
+            const imageElements = new Map();
+            const container = document.getElementById("image-container");
+            const loading = document.getElementById("loading");
+            const progressText = document.getElementById("progress-text");
+            const debug = document.getElementById("debug");
+            const instructions = document.getElementById("instructions");
+
+            let loadedCount = 0;
+            let currentImage = null;
+
+            // Preload all images
+            function preloadImages() {
+                return new Promise((resolve) => {
+                    const totalImages = images.length;
+
+                    images.forEach((imgData) => {
+                        const img = new Image();
+                        img.src = `./generated-images/${imgData.filename}`;
+
+                        // Set loading to eager (not lazy)
+                        img.loading = "eager";
+                        img.decoding = "sync";
+
+                        img.onload = () => {
+                            loadedCount++;
+                            const percent = Math.round((loadedCount / totalImages) * 100);
+                            progressText.textContent = `Loading images... ${percent}%`;
+
+                            if (loadedCount === totalImages) {
+                                resolve();
+                            }
+                        };
+
+                        img.onerror = () => {
+                            console.warn(`Failed to load: ${imgData.filename}`);
+                            loadedCount++;
+                            if (loadedCount === totalImages) {
+                                resolve();
+                            }
+                        };
+
+                        // Add to container
+                        container.appendChild(img);
+
+                        // Store reference with key based on parameters
+                        const key = `${imgData.rotate_pitch}_${imgData.pupil_x}_${imgData.pupil_y}`;
+                        imageElements.set(key, img);
+                    });
+                });
+            }
+
+            // Find the closest image based on target parameters
+            function findClosestImage(targetPitch, targetPupilX, targetPupilY) {
+                // Find closest pitch value
+                const closestPitch = pitchValues.reduce((prev, curr) =>
+                    Math.abs(curr - targetPitch) < Math.abs(prev - targetPitch) ? curr : prev
+                );
+
+                // Find closest pupil_x value
+                const closestPupilX = pupilXValues.reduce((prev, curr) =>
+                    Math.abs(curr - targetPupilX) < Math.abs(prev - targetPupilX) ? curr : prev
+                );
+
+                // Find closest pupil_y value
+                const closestPupilY = pupilYValues.reduce((prev, curr) =>
+                    Math.abs(curr - targetPupilY) < Math.abs(prev - targetPupilY) ? curr : prev
+                );
+
+                return `${closestPitch}_${closestPupilX}_${closestPupilY}`;
+            }
+
+            // Update displayed image based on mouse position
+            function updateImage(mouseX, mouseY) {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+
+                // Calculate offset from center (-1 to 1)
+                const offsetX = (mouseX - centerX) / centerX;
+                const offsetY = (mouseY - centerY) / centerY;
+
+                // Map to parameter ranges
+                // pupil_x: -15 to 15 (horizontal eye movement) - follows mouse X
+                // pupil_y: -15 to 15 (vertical eye movement) - follows mouse Y (inverted)
+                // rotate_pitch: -20 to 20 (head tilt up/down) - follows mouse Y
+
+                const targetPupilX = offsetX * 15;
+                const targetPupilY = -offsetY * 15; // Inverted: mouse up = look up
+                const targetPitch = offsetY * 20; // Mouse up = negative pitch (look up)
+
+                const imageKey = findClosestImage(targetPitch, targetPupilX, targetPupilY);
+
+                // Update debug info
+                debug.textContent = `Mouse: (${mouseX.toFixed(0)}, ${mouseY.toFixed(0)}) | Offset: (${offsetX.toFixed(
+                    2
+                )}, ${offsetY.toFixed(2)}) | Image: ${imageKey}`;
+
+                // Switch to the new image
+                if (currentImage !== imageKey) {
+                    // Hide current image
+                    if (currentImage && imageElements.has(currentImage)) {
+                        imageElements.get(currentImage).classList.remove("active");
+                    }
+
+                    // Show new image
+                    if (imageElements.has(imageKey)) {
+                        imageElements.get(imageKey).classList.add("active");
+                        currentImage = imageKey;
+                    }
+                }
+            }
+
+            // Initialize
+            async function init() {
+                await preloadImages();
+
+                // Hide loading screen
+                loading.classList.add("hidden");
+
+                // Show initial image (center position)
+                const initialKey = "0_0_0";
+                if (imageElements.has(initialKey)) {
+                    imageElements.get(initialKey).classList.add("active");
+                    currentImage = initialKey;
+                }
+
+                // Fade out instructions after 3 seconds
+                setTimeout(() => {
+                    instructions.classList.add("fade");
+                }, 3000);
+
+                // Add mouse move listener
+                document.addEventListener("mousemove", (e) => {
+                    updateImage(e.clientX, e.clientY);
+                });
+
+                // Also handle touch for mobile
+                document.addEventListener("touchmove", (e) => {
+                    if (e.touches.length > 0) {
+                        updateImage(e.touches[0].clientX, e.touches[0].clientY);
+                    }
+                });
+            }
+
+            init();
+        </script>
+    </body>
+</html>

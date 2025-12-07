@@ -1,0 +1,272 @@
+[
+  {
+    "filename": "image_pitch-20_px-15_py-15.webp",
+    "rotate_pitch": -20,
+    "pupil_x": -15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch-20_px-15_py0.webp",
+    "rotate_pitch": -20,
+    "pupil_x": -15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch-20_px-15_py15.webp",
+    "rotate_pitch": -20,
+    "pupil_x": -15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch-20_px0_py-15.webp",
+    "rotate_pitch": -20,
+    "pupil_x": 0,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch-20_px0_py0.webp",
+    "rotate_pitch": -20,
+    "pupil_x": 0,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch-20_px0_py15.webp",
+    "rotate_pitch": -20,
+    "pupil_x": 0,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch-20_px15_py-15.webp",
+    "rotate_pitch": -20,
+    "pupil_x": 15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch-20_px15_py0.webp",
+    "rotate_pitch": -20,
+    "pupil_x": 15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch-20_px15_py15.webp",
+    "rotate_pitch": -20,
+    "pupil_x": 15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch-10_px-15_py-15.webp",
+    "rotate_pitch": -10,
+    "pupil_x": -15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch-10_px-15_py0.webp",
+    "rotate_pitch": -10,
+    "pupil_x": -15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch-10_px-15_py15.webp",
+    "rotate_pitch": -10,
+    "pupil_x": -15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch-10_px0_py-15.webp",
+    "rotate_pitch": -10,
+    "pupil_x": 0,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch-10_px0_py0.webp",
+    "rotate_pitch": -10,
+    "pupil_x": 0,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch-10_px0_py15.webp",
+    "rotate_pitch": -10,
+    "pupil_x": 0,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch-10_px15_py-15.webp",
+    "rotate_pitch": -10,
+    "pupil_x": 15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch-10_px15_py0.webp",
+    "rotate_pitch": -10,
+    "pupil_x": 15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch-10_px15_py15.webp",
+    "rotate_pitch": -10,
+    "pupil_x": 15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch0_px-15_py-15.webp",
+    "rotate_pitch": 0,
+    "pupil_x": -15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch0_px-15_py0.webp",
+    "rotate_pitch": 0,
+    "pupil_x": -15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch0_px-15_py15.webp",
+    "rotate_pitch": 0,
+    "pupil_x": -15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch0_px0_py-15.webp",
+    "rotate_pitch": 0,
+    "pupil_x": 0,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch0_px0_py0.webp",
+    "rotate_pitch": 0,
+    "pupil_x": 0,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch0_px0_py15.webp",
+    "rotate_pitch": 0,
+    "pupil_x": 0,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch0_px15_py-15.webp",
+    "rotate_pitch": 0,
+    "pupil_x": 15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch0_px15_py0.webp",
+    "rotate_pitch": 0,
+    "pupil_x": 15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch0_px15_py15.webp",
+    "rotate_pitch": 0,
+    "pupil_x": 15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch10_px-15_py-15.webp",
+    "rotate_pitch": 10,
+    "pupil_x": -15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch10_px-15_py0.webp",
+    "rotate_pitch": 10,
+    "pupil_x": -15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch10_px-15_py15.webp",
+    "rotate_pitch": 10,
+    "pupil_x": -15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch10_px0_py-15.webp",
+    "rotate_pitch": 10,
+    "pupil_x": 0,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch10_px0_py0.webp",
+    "rotate_pitch": 10,
+    "pupil_x": 0,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch10_px0_py15.webp",
+    "rotate_pitch": 10,
+    "pupil_x": 0,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch10_px15_py-15.webp",
+    "rotate_pitch": 10,
+    "pupil_x": 15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch10_px15_py0.webp",
+    "rotate_pitch": 10,
+    "pupil_x": 15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch10_px15_py15.webp",
+    "rotate_pitch": 10,
+    "pupil_x": 15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch20_px-15_py-15.webp",
+    "rotate_pitch": 20,
+    "pupil_x": -15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch20_px-15_py0.webp",
+    "rotate_pitch": 20,
+    "pupil_x": -15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch20_px-15_py15.webp",
+    "rotate_pitch": 20,
+    "pupil_x": -15,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch20_px0_py-15.webp",
+    "rotate_pitch": 20,
+    "pupil_x": 0,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch20_px0_py0.webp",
+    "rotate_pitch": 20,
+    "pupil_x": 0,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch20_px0_py15.webp",
+    "rotate_pitch": 20,
+    "pupil_x": 0,
+    "pupil_y": 15
+  },
+  {
+    "filename": "image_pitch20_px15_py-15.webp",
+    "rotate_pitch": 20,
+    "pupil_x": 15,
+    "pupil_y": -15
+  },
+  {
+    "filename": "image_pitch20_px15_py0.webp",
+    "rotate_pitch": 20,
+    "pupil_x": 15,
+    "pupil_y": 0
+  },
+  {
+    "filename": "image_pitch20_px15_py15.webp",
+    "rotate_pitch": 20,
+    "pupil_x": 15,
+    "pupil_y": 15
+  }
+]
