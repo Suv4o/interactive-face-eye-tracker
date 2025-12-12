@@ -169,9 +169,10 @@
 
         <script>
             // Image mappings - all combinations of pitch, pupil_x, pupil_y
-            const pitchValues = [-20, -10, 0, 10, 20];
-            const pupilXValues = [-15, 0, 15];
-            const pupilYValues = [-15, 0, 15];
+            // Dense grid for smooth tracking (9 * 7 * 5 = 315 images)
+            const pitchValues = [-20, -15, -10, -5, 0, 5, 10, 15, 20];
+            const pupilXValues = [-15, -10, -5, 0, 5, 10, 15];
+            const pupilYValues = [-15, -7, 0, 7, 15];
 
             // Generate all image filenames
             const images = [];

@@ -19,15 +19,15 @@ interface ImageParams {
 function generateParameterCombinations(): ImageParams[] {
     const combinations: ImageParams[] = [];
 
-    // Reduced grid for ~25 images total
-    // - 5 values for rotate_pitch: -20, -10, 0, 10, 20
-    // - 5 values for pupil_x: -15, -7, 0, 7, 15
-    // But only generate corner + center combinations to reduce count
-    const pitchValues = [-20, -10, 0, 10, 20];
-    const pupilXValues = [-15, 0, 15];
-    const pupilYValues = [-15, 0, 15];
+    // Dense grid for smooth tracking (~315 images)
+    // - 9 values for rotate_pitch: -20, -15, -10, -5, 0, 5, 10, 15, 20
+    // - 7 values for pupil_x: -15, -10, -5, 0, 5, 10, 15
+    // - 5 values for pupil_y: -15, -7, 0, 7, 15
+    const pitchValues = [-20, -15, -10, -5, 0, 5, 10, 15, 20];
+    const pupilXValues = [-15, -10, -5, 0, 5, 10, 15];
+    const pupilYValues = [-15, -7, 0, 7, 15];
 
-    // Generate combinations (5 * 3 * 3 = 45, but we'll skip existing ones)
+    // Generate combinations (9 * 7 * 5 = 315 images, but we'll skip existing ones)
     for (const pitch of pitchValues) {
         for (const pupilX of pupilXValues) {
             for (const pupilY of pupilYValues) {
