@@ -1,6 +1,10 @@
 # Eye Tracking Face Generator
 
+![Eye Tracking Face Generator](https://res.cloudinary.com/suv4o/image/upload/q_auto,f_auto,w_850,e_sharpen:100/v1766137601/blog/making-a-face-follow-your-cursor-with-ai%E2%80%91generated-images/making-a-face-follow-your-cursor-with-ai_generated-images_hejbzy)
+
 An interactive web experience where a face image follows your mouse cursor. The project uses AI-generated images with different eye positions and head tilts to create the illusion of a face tracking your cursor movement.
+
+> 📖 **This project is part of a blog article.** For a detailed walkthrough and explanation, read the full article: [Making a Face Follow Your Cursor with AI-Generated Images](https://www.trpkovski.com/2025/12/20/making-a-face-follow-your-cursor-with-ai-generated-images)
 
 ## Demo
 
